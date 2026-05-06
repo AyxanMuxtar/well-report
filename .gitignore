@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Data — never commit raw PDFs or processed indexes
+data/raw_pdfs/*.pdf
+data/processed/*.npy
+data/processed/*.pkl
+data/processed/*.parquet
+data/nds_events.xlsx
+
+# Database
+db/*.duckdb
+db/*.duckdb.wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,121 @@
+well_family,keyword,n_reports
+15_9_19,suspended,34
+15_9_19,ofs,32
+15_9_19,ofs strike,32
+15_9_19,strike,32
+15_9_19,suspended ofs,32
+15_9_19,strike continue,30
+15_9_19,strike suspended,30
+15_9_19,continue waiting,29
+15_9_19,waiting ofs,29
+15_9_19,core,23
+15_9_19,atlas,20
+15_9_19,rig suspended,19
+15_9_19,tih,17
+15_9_19,press,16
+15_9_19,waiting,15
+15_9_19,window,15
+15_9_19,anchor,14
+15_9_19,cont,14
+15_9_19,surveyed,14
+15_9_19,log,13
+15_9_F_10,ton,9
+15_9_F_10,ton rop,9
+15_9_F_10,torque rop,8
+15_9_F_10,wob ton,8
+15_9_F_10,according dds,4
+15_9_F_10,conductor,4
+15_9_F_10,dds,4
+15_9_F_10,dds instructions,4
+15_9_F_10,hivis,4
+15_9_F_10,min wob,4
+15_9_F_10,parameters,4
+15_9_F_10,powerdrive,4
+15_9_F_10,tons ecd,4
+15_9_F_10,wob tons,4
+15_9_F_10,cart,3
+15_9_F_10,cement string,3
+15_9_F_10,ezsv,3
+15_9_F_10,ezsv plug,3
+15_9_F_10,gmwd,3
+15_9_F_10,hivis pills,3
+15_9_F_11,liter min,16
+15_9_F_11,liter,15
+15_9_F_11,average rop,13
+15_9_F_11,perforation,11
+15_9_F_11,orientated,10
+15_9_F_11,tractor,9
+15_9_F_11,wireline,9
+15_9_F_11,orientated wob,8
+15_9_F_11,average,7
+15_9_F_11,cement stinger,7
+15_9_F_11,lubricator,7
+15_9_F_11,rih perforation,7
+15_9_F_11,stinger,7
+15_9_F_11,vessel,7
+15_9_F_11,ecd average,6
+15_9_F_11,min wob,6
+15_9_F_11,oriented,6
+15_9_F_11,supply vessel,6
+15_9_F_11,xmt,6
+15_9_F_11,drill pipe,5
+15_9_F_12,pilot,10
+15_9_F_12,tie-back,10
+15_9_F_12,ecd rop,8
+15_9_F_12,spp wob,8
+15_9_F_12,bars,7
+15_9_F_12,tie-back casing,7
+15_9_F_12,linked,6
+15_9_F_12,obm wob,6
+15_9_F_12,scaffolding,6
+15_9_F_12,survey required,6
+15_9_F_12,wbm,6
+15_9_F_12,adn,5
+15_9_F_12,asing,5
+15_9_F_12,chemical,5
+15_9_F_12,conveyer,5
+15_9_F_12,injection line,5
+15_9_F_12,lpdr,5
+15_9_F_12,rop linked,5
+15_9_F_12,sing,5
+15_9_F_12,tbc,5
+15_9_F_14,asv,7
+15_9_F_14,plt,7
+15_9_F_14,spear,7
+15_9_F_14,xmt,7
+15_9_F_14,control line,6
+15_9_F_14,rtts,6
+15_9_F_14,torque ecd,6
+15_9_F_14,cart,5
+15_9_F_14,csg,5
+15_9_F_14,cutter,5
+15_9_F_14,hpdr,5
+15_9_F_14,perforate interval,5
+15_9_F_14,rst,5
+15_9_F_14,spp string,5
+15_9_F_14,tbc,5
+15_9_F_14,time hour,5
+15_9_F_14,tractor,5
+15_9_F_14,trip time,5
+15_9_F_14,wire line,5
+15_9_F_14,adjustment sub,4
+15_9_F_15,string bit,9
+15_9_F_15,bars,7
+15_9_F_15,lcm pill,6
+15_9_F_15,rop mud,6
+15_9_F_15,spp string,6
+15_9_F_15,spp torque,6
+15_9_F_15,torque wob,6
+15_9_F_15,cart,5
+15_9_F_15,cuttings handling,5
+15_9_F_15,ecd controlled,5
+15_9_F_15,lcm,5
+15_9_F_15,powerdrive according,5
+15_9_F_15,zms,5
+15_9_F_15,according instructions,4
+15_9_F_15,according schlumberger,4
+15_9_F_15,bit wob,4
+15_9_F_15,downlinked powerdrive,4
+15_9_F_15,mud weight,4
+15_9_F_15,padprt,4
+15_9_F_15,pooh tripping,4
