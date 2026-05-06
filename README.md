@@ -61,7 +61,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Place data
-- Copy all 1,390 PDFs into `data/raw_pdfs/`
+- Copy all PDFs into `data/raw_pdfs/`
 - Copy `nds_events.xlsx` into `data/`
 
 ### 4. Launch Jupyter
@@ -81,10 +81,10 @@ jupyter lab        # or:  jupyter notebook
 
 After this notebook completes, `db/drilling.duckdb` is populated with around 10 to 14 thousand operation rows.
 
-### `02_task2_matching.ipynb` → Task 2 *(stub — built in Block 3)*
+### `02_task2_matching.ipynb` → Task 2 
 Loads `nds_events.xlsx`, builds TF-IDF + SBERT indexes, runs strict matching for F-10/F-11/F-12 and aggressive cross-well fallback for F-13.
 
-### `03_task3_nlp.ipynb` → Task 3 *(stub — built in Block 4)*
+### `03_task3_nlp.ipynb` → Task 3 
 Runs NER, activity classification, and TF-IDF keyword extraction over the operations table.
 
 ### `00_explore.ipynb` → Scratch
