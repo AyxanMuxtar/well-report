@@ -136,43 +136,133 @@ def _build_field_stop_pattern() -> str:
 _FIELD_STOP_RX = _build_field_stop_pattern()
 
 
-def _extract_field_value(header_block: str, label: str) -> Optional[str]:
+# Pre-built sorted list of (label, columns, converter) — longest label first
+# so multi-word labels match before short ones.
+_HEADER_LABELS_SORTED = sorted(
+    _HEADER_LABELS,
+    key=lambda t: -len(t[1]),
+)
+
+
+def _find_all_label_occurrences(line: str) -> list[tuple[int, int, str, str, callable]]:
     """
-    Extract the value text following `label`, up to (but not including) the
-    next known label or section heading, or end of header_block.
+    Scan `line` for every known header label and return their positions.
+    Returns a list of tuples sorted by start_pos:
+        (start_pos, end_pos, column_name, label, converter)
+
+    Overlapping matches are filtered: if 'Depth mTVD:' and 'Depth at Kick Off mTVD:'
+    both could match at the same position, only the longer one wins.
     """
-    pattern = (
-        re.escape(label)
-        + r"\s*(.*?)\s*(?:"
-        + _FIELD_STOP_RX
-        + r"|\Z)"
-    )
-    m = re.search(pattern, header_block, flags=re.DOTALL)
-    if not m:
-        return None
-    raw = m.group(1).strip()
-    return raw or None
+    candidates: list[tuple[int, int, str, str, callable]] = []
+    for col, label, conv in _HEADER_LABELS_SORTED:
+        # Find every occurrence of this label
+        for m in re.finditer(re.escape(label), line):
+            candidates.append((m.start(), m.end(), col, label, conv))
+
+    # Sort by start, then by length descending so longest match at a given
+    # position comes first.
+    candidates.sort(key=lambda x: (x[0], -(x[1] - x[0])))
+
+    # Filter out any candidate whose span overlaps an earlier (longer) one
+    kept: list[tuple[int, int, str, str, callable]] = []
+    for cand in candidates:
+        s, e, *_ = cand
+        if any(not (e <= ks or s >= ke) for ks, ke, *_ in kept):
+            continue
+        kept.append(cand)
+
+    # Final sort by start position for left-to-right walk
+    kept.sort(key=lambda x: x[0])
+    return kept
+
+
+def _strip_dangling_label_prefix(value: str) -> str:
+    """
+    Some PDFs emit a stray label-prefix word at the end of a value due to
+    word-merge issues across visual rows. For example:
+        'Mærsk Contractors Depth'  ->  'Mærsk Contractors'
+    where 'Depth' is the start of 'Depth At Last Casing mTVD:' from the next
+    visual row.
+
+    Strategy: tokenize trailing tokens; if the last 1-3 tokens form a prefix
+    of any known label, drop them.
+    """
+    if not value:
+        return value
+    tokens = value.split()
+    if not tokens:
+        return value
+    all_labels_lc = [lab.lower() for _, lab, _ in _HEADER_LABELS]
+    for n in (3, 2, 1):
+        if len(tokens) <= n:
+            continue
+        tail = " ".join(tokens[-n:]).lower()
+        # Match if any label STARTS with this tail (followed by space or end)
+        for lab in all_labels_lc:
+            if lab.startswith(tail + " ") or lab == tail + ":":
+                return " ".join(tokens[:-n]).strip()
+    return value
+
+
+def _parse_header_line(line: str) -> dict:
+    """
+    Parse one line that may contain multiple "Label: value" pairs side-by-side
+    (the PDF's two-column header layout).
+
+    Strategy: locate every known label in the line; the value of label[i] is
+    the slice of text between the END of label[i] and the START of label[i+1].
+    """
+    occurrences = _find_all_label_occurrences(line)
+    if not occurrences:
+        return {}
+
+    out: dict = {}
+    for i, (start, end, col, label, conv) in enumerate(occurrences):
+        # Value spans from end of this label to the start of the next label
+        value_end = occurrences[i + 1][0] if i + 1 < len(occurrences) else len(line)
+        raw = line[end:value_end].strip()
+        # If this is the final label on the line, the trailing token may be
+        # the start of a label from the next visual row that pdfplumber merged in.
+        if i + 1 == len(occurrences):
+            raw = _strip_dangling_label_prefix(raw)
+        if raw == "":
+            value = None
+        else:
+            try:
+                value = conv(raw)
+            except Exception:
+                value = None
+        # First non-None wins (alt-unit variants come after main label)
+        if out.get(col) is None and value is not None:
+            out[col] = value
+    return out
 
 
 def parse_header(text: str) -> dict:
-    """Extract header/metadata fields as a dict. Missing fields → None."""
+    """
+    Extract header/metadata fields as a dict. Missing fields -> None.
+
+    The PDF header is laid out in two columns. pdfplumber emits each visual
+    row as one text line where left-column and right-column fields appear
+    side-by-side. We parse each line independently, finding all label
+    occurrences and slicing values between them.
+    """
     # The header occupies everything before the first "Summary of activities" heading
     summary_match = re.search(r"Summary of activities", text)
     header_block = text[: summary_match.start()] if summary_match else text
 
-    out: dict = {}
-    for col, label, conv in _HEADER_LABELS:
-        # Only fill if not already populated by an earlier (alt-unit) variant
-        if out.get(col) is not None:
+    # Initialize all fields to None
+    out: dict = {col: None for col, _, _ in _HEADER_LABELS}
+
+    # Walk line by line; a header line may contain multiple labels side by side.
+    for line in header_block.splitlines():
+        line = line.strip()
+        if not line:
             continue
-        raw = _extract_field_value(header_block, label)
-        if raw is None:
-            out.setdefault(col, None)
-            continue
-        try:
-            out[col] = conv(raw)
-        except Exception:
-            out[col] = None
+        line_fields = _parse_header_line(line)
+        for col, val in line_fields.items():
+            if out.get(col) is None and val is not None:
+                out[col] = val
 
     # Period is special: parse "YYYY-MM-DD HH:MM - YYYY-MM-DD HH:MM" into start+end
     period_text = out.pop("period", None)
